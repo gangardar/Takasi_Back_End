@@ -23,6 +23,7 @@ return new class extends Migration
             $table->enum('accountStatus', ['ideal', 'disabled']);
             $table->double('current_latitude');
             $table->double('current_longitude');
+            $table->rememberToken();
             $table->timestamps();
         });
     }

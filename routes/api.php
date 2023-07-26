@@ -2,6 +2,10 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\PassengerController;
+use App\Http\Controllers\DriverController;
+use App\Http\Controllers\BikeController;
 
 /*
 |--------------------------------------------------------------------------
@@ -9,11 +13,29 @@ use Illuminate\Support\Facades\Route;
 |--------------------------------------------------------------------------
 |
 | Here is where you can register API routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| is assigned the "api" middleware group. Enjoy building your API!
+| routes are loaded by the RouteServiceProvider and all of them will
+| be assigned to the "api" middleware group. Make something great!
 |
 */
 
-Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
+Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+Route::middleware('auth:sanctum')->get('passenger', [PassengerController::class, 'getPassenger']);
+Route::post('passenger', [PassengerController::class, 'store']);
+Route::post("passenger/disable",[PassengerController::class, 'disableUser']);
+Route::post('passenger/login',[PassengerController::class, 'login']);
+
+
+// Route::middleware('auth:sanctum')->get('/passenger', function (Request $request) {
+//     return $request->passenger();
+// });
+
+Route::get("driver",[DriverController::class,'getDriver']);
+Route::post("driver",[DriverController::class,'store']);
+
+Route::get("bike",[BikeController::class,'getBike']);
+Route::post("bike",[BikeController::class,'store']);
+
+

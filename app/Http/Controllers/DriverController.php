@@ -27,7 +27,7 @@ class DriverController extends Controller
             'phone' => 'required|unique:drivers',
             'lincenceNo'=>'required|unique:drivers',
             'email' => 'required|email|unique:drivers',
-            'photo' => 'image|mimes:jpeg,png,jpg|max:2048',
+            'photo' => 'image|mimes:jpeg,png,jpg,webp|max:2048',
             'password' => 'required|string|min:8',
             'status' => Rule::in(['offline','active','looking','riding','arrived']),
             'drivingLincence' => 'required|image|mimes:jpeg,png,jpg|max:2048',

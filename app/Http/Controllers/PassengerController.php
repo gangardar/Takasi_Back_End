@@ -31,49 +31,44 @@ class PassengerController extends Controller
     }
 }
 
-    function store(Request $request){
+function store(Request $request)
+{
+    $validateData = $request->validate([
+        'name' => 'required|string',
+        'phone' => 'required|unique:passengers',
+        'email' => 'required|email|unique:passengers',
+        'photo' => 'image|mimes:jpeg,png,jpg,webp|max:2048',
+        'password' => 'required|string|min:8',
+        'status' => Rule::in(['inactive', 'active', 'searching', 'riding', 'arrived']),
+        'accountStatus' => Rule::in(['ideal', 'disabled']),
+        'current_latitude' => 'numeric',
+        'current_longitude' => 'numeric',
+    ]);
 
-        $validateData = $request->validate([
-            'name' => 'required|string',
-            'phone' => 'required|unique:passengers',
-            'email' => 'required|email|unique:passengers',
-            'photo' => 'image|mimes:jpeg,png,jpg|max:2048',
-            'password' => 'required|string|min:8',
-            'status' => Rule::in(['inactive','active','searching','riding','arrived']),
-            'accountStatus'=> Rule::in(['ideal', 'disabled']),
-            'current_latitude' => 'numeric',
-            'current_longitude' => 'numeric',
-        ]);
+    if ($request->hasFile('photo')) {
+        $photo = $request->file('photo');
+        $photoPath = $photo->store('passenger-photos', 'public');
+        $url = url('/storage/' . $photoPath);
 
-        if ($request->hasFile('photo')) {
-            $photo = $request->file('photo');
-            $photoPath = $photo->store('passenger-photos', 'public');
-            $url = url('/storage/'.$photoPath);
-    
-            $validateData['photo'] = $url;
-        }
-
-        if ($validateData){
-            $passenger = Passenger::create($validateData);
-        }else{
-            return response()-> json([
-                'status'=> 422,
-                'errors'=> $validateData->messages()
-            ],422);
-        }
-
-        if($passenger){
-
-            return response()->json([
-                'message' => 'Passenger created successfully',
-                'passenger' => $passenger
-            ], 201);
-        }else{
-            return response()-> json([
-                'message' => 'Something Went Wrong',
-            ],500);
-        }
+        $validateData['photo'] = $url;
     }
+
+    // Use $validateData instead of $request for validation check
+    if ($validateData) {
+        $passenger = Passenger::create($validateData);
+
+        return response()->json([
+            'message' => 'Passenger created successfully',
+            'passenger' => $passenger
+        ], 201);
+    } else {
+        // Instead of returning $validateData->messages(), return an array with errors
+        return response()->json([
+            'status' => 422,
+            'errors' => 'Validation failed' // Replace this with $validateData->errors() if needed
+        ], 422);
+    }
+}
 
     function disableUser(Request $request){
         $id = $request->query('id');
@@ -101,27 +96,20 @@ class PassengerController extends Controller
 
     }
 
-    function authenticate(Request $request){
+    function login(Request $request)
+    {
+        $credentials = $request->only('email', 'password');
 
-        $loginValide =  $request->validate([
-            'email' => ['required'|'email'],
-            'password' =>['required | string']
-        ]);
-
-        $email = $request->email;
-        $password = $request->password;
-
-        if(Auth::attempt($loginValide)){
-            $request->session()->regenerate();
-            return response()->json([
-                'message' => 'Passenger created successfully',
-                'passenger' => $passenger
-            ], 201);
+        if (Auth::guard('passenger')->attempt($credentials)) {
+            // Authentication successful
+            return response()->json(['message' => 'Passenger authenticated']);
         }else{
-            return response()-> json([
-                'message' => 'Something Went Wrong',
-            ],500);
+            // Authentication failed
+        return response()->json(['message' => 'Invalid credentials'], 401);
+
         }
+
+        
     }
 
 }
