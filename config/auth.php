@@ -15,7 +15,7 @@ return [
 
     'defaults' => [
         'guard' => 'passenger',
-        'passwords' => 'users',
+        'passwords' => 'passenger',
     ],
 
     /*

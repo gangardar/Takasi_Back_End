@@ -23,17 +23,16 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 Route::middleware('auth:sanctum')->get('passenger', [PassengerController::class, 'getPassenger']);
-Route::post('passenger', [PassengerController::class, 'store']);
-Route::post("passenger/disable",[PassengerController::class, 'disableUser']);
+Route::post('passenger/register', [PassengerController::class, 'store']);
+Route::middleware('auth:sanctum')->post("passenger/disable",[PassengerController::class, 'disableUser']);
 Route::post('passenger/login',[PassengerController::class, 'login']);
 
 
-// Route::middleware('auth:sanctum')->get('/passenger', function (Request $request) {
-//     return $request->passenger();
-// });
 
-Route::get("driver",[DriverController::class,'getDriver']);
-Route::post("driver",[DriverController::class,'store']);
+Route::middleware('auth:sanctum')->get("driver",[DriverController::class,'getDriver']);
+Route::post("driver/register",[DriverController::class,'store']);
+Route::middleware('auth:sanctum')->post("passenger/disable",[PassengerController::class, 'disableUser']);
+Route::post("driver/login",[DriverController::class,'login']);
 
 Route::get("bike",[BikeController::class,'getBike']);
 Route::post("bike",[BikeController::class,'store']);

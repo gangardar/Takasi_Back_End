@@ -13,5 +13,9 @@ class VerifyCsrfToken extends Middleware
      */
     protected $except = [
         'api/passenger/login', // Add the login route here
+        'api/passenger/register',
+        'api/driver/login',
+        'api/driver/register'
+
     ];
 }

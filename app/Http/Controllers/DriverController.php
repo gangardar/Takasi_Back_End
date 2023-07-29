@@ -53,20 +53,63 @@ class DriverController extends Controller
 
         
 
-        $driver = Driver::create($validateData);
-
-        if($driver){
+        if ($validateData) {
+            $driver = Driver::create($validateData);
+    
             return response()->json([
                 'message' => 'Driver created successfully',
-                'passenger' => $driver
-            ], 201,[], JSON_UNESCAPED_SLASHES|JSON_PRETTY_PRINT);
-            
-        }else{
-            return response()-> json([
-                'message' => 'Something Went Wrong in Driver',
-            ],500);
+                'driver' => $driver
+            ], 201);
+        } else {
+            // Instead of returning $validateData->messages(), return an array with errors
+            return response()->json([
+                'status' => 422,
+                'errors' => 'Validation failed' // Replace this with $validateData->errors() if needed
+            ], 422);
         }
 
 
+    }
+
+    function disableUser(Request $request){
+        $id = $request->query('id');
+
+        if($id){
+            $passenger =Driver::find($id); 
+
+            if($passenger && $passenger->accountStatus === 'ideal'){
+                $passenger->accountStatus = "disabled";
+                $passenger->save();
+                return response()->json([
+                    'message' => 'Your account has been disabled',
+                     'passenger' => $passenger
+                    ], 201);
+            }else{
+                return response()->json([
+                    'error' => 'Passenger has already been deactivated'
+                ], 404);
+            }
+        }else{
+            return response()->json([
+                'error' => 'Passenger Unknown Error'
+            ], 404);
+        }
+
+    }
+
+    function login(Request $request)
+    {
+        $credentials = $request->only('email', 'password');
+
+        if (Auth::guard('driver')->attempt($credentials)) {
+            // Authentication successful
+            $driver = Driver::where('email', $request['email'])->first();
+            $token = $driver->createToken('auth_token')->plainTextToken;
+
+            return new JsonResponse(['message' => 'Passenger authenticated', 'token' => $token, 'passenger' => $driver], 200);
+    } else {
+        // Authentication failed
+        return new JsonResponse(['message' => 'Invalid credentials'], 401);
+    }
     }
 }

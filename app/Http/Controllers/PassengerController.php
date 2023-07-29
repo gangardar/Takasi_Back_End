@@ -9,6 +9,7 @@ use Illuminate\Validation\Rule;
 use App\Models\Passenger;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\JsonResponse;
 
 
 class PassengerController extends Controller
@@ -102,12 +103,15 @@ function store(Request $request)
 
         if (Auth::guard('passenger')->attempt($credentials)) {
             // Authentication successful
-            return response()->json(['message' => 'Passenger authenticated']);
-        }else{
-            // Authentication failed
-        return response()->json(['message' => 'Invalid credentials'], 401);
+            $passenger = Passenger::where('email', $request['email'])->first();
+            $token = $passenger->createToken('auth_token')->plainTextToken;
 
-        }
+            return new JsonResponse(['message' => 'Passenger authenticated', 'token' => $token, 'passenger' => $passenger], 200);
+    } else {
+        // Authentication failed
+        return new JsonResponse(['message' => 'Invalid credentials'], 401);
+    }
+
 
         
     }
