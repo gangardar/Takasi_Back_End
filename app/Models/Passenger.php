@@ -8,7 +8,6 @@ use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 
-
 class Passenger extends Model implements Authenticatable
 {
     use HasFactory, HasApiTokens;
@@ -25,6 +24,8 @@ class Passenger extends Model implements Authenticatable
         'current_latitude',
         'current_longitude'
     ];
+
+     // Unique Slug get generated
     protected static function boot()
     {
         parent::boot();
