@@ -15,15 +15,17 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('lincenceNo');
+            $table->string('slug')->unique();
             $table->string('phone');
             $table->string('email');
-            $table->enum('status', ['offline', 'active', 'looking', 'driving', 'arrived']);
+            $table->enum('status', ['offline', 'active', 'looking', 'driving', 'arrived'])->default('offline');
             $table->enum('accountStatus', ['ideal', 'disabled']);
             $table->string('photo');
             $table->string('password');
             $table->string('drivingLincence');
-            $table->double('current_latitude');
-            $table->double('current_longitude');
+            $table->string('current_latitude');
+            $table->string('current_longitude');
+            $table->string('role')->default('driver');
             $table->timestamps();
         });
     }

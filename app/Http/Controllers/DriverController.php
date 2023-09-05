@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use Validator;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use App\Models\Driver;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\JsonResponse;
 
 class DriverController extends Controller
@@ -31,8 +34,8 @@ class DriverController extends Controller
             'password' => 'required|string|min:8',
             'status' => Rule::in(['offline','active','looking','riding','arrived']),
             'drivingLincence' => 'required|image|mimes:jpeg,png,jpg|max:2048',
-            'current_latitude' => 'numeric',
-            'current_longitude' => 'numeric',
+            'current_latitude' => 'required|numeric',
+            'current_longitude' => 'required|numeric',
         ]);
         
         if ($request->hasFile('drivingLincence')) {
@@ -46,9 +49,9 @@ class DriverController extends Controller
         if ($request->hasFile('photo')) {
             $photo = $request->file('photo');
             $photoPath = $photo->store('driver-photos', 'public');
-            $url = url('/storage/' . $photoPath);
+            $url1 = url('/storage/' . $photoPath);
 
-            $validateData['photo'] = $url;
+            $validateData['photo'] = $url1;
         }
 
         

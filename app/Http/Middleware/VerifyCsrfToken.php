@@ -15,7 +15,9 @@ class VerifyCsrfToken extends Middleware
         'api/passenger/login', // Add the login route here
         'api/passenger/register',
         'api/driver/login',
-        'api/driver/register'
+        'api/driver/register',
+        'api/admin/register',
+        'api/admin/login',
 
     ];
 }

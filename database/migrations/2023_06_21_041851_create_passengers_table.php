@@ -21,9 +21,10 @@ return new class extends Migration
             $table->string('password');
             $table->enum('status', ['expired', 'active', 'searching', 'riding', 'arrived']);
             $table->enum('accountStatus', ['ideal', 'disabled']);
-            $table->double('current_latitude');
-            $table->double('current_longitude');
+            $table->string('current_latitude');
+            $table->string('current_longitude');
             $table->rememberToken();
+            $table->string('role')->default('passenger');
             $table->timestamps();
         });
     }
